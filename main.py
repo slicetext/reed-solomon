@@ -133,12 +133,6 @@ def eea(n: [int], d: [int], stop_threshold):
         y0, y1 = y1, sub_two_poly(y0, mult_two_poly(q, y1))
 
     return n, x0, y0
-    # q, r = div_two_poly(n, d)
-    # if len(n) < stop_threshold:
-    #     return q, [1], [0]
-    # gcd, s, t = eea(d, r, stop_threshold)
-    # temp = mult_two_poly(q, t)
-    # return gcd, t, [s[i] - temp[i] for i in range(len(s))]
 
 
 if __name__ == "__main__":
