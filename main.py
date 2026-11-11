@@ -84,6 +84,28 @@ def div_two_poly(numerator: [float], denominator: [float]) -> [float]:
     return quotient, remainder
 
 
+def sub_two_poly(minuend: [float], subtrahend: [float]) -> [float]:
+    minuend = list(minuend)
+    subtrahend = list(subtrahend)
+
+    if (len(minuend) > len(subtrahend)):
+        diff = len(minuend) - len(subtrahend)
+        subtrahend = [0] * diff + subtrahend
+    if (len(subtrahend) > len(minuend)):
+        diff = len(subtrahend) - len(minuend)
+        minuend = [0] * diff + minuend
+
+    return [minuend[i] - subtrahend[i] for i in range(len(minuend))]
+
+
+def degree(p: [float]):
+    index = 0
+    while (p[index] == 0):
+        index += 1
+
+    return len(p) - index
+
+
 # Gao's algo
 def decode(data: [int], xvals: [int], k: int) -> [int]:
     g_0 = lagrange_interpolation(data, xvals, len(data))
@@ -97,12 +119,24 @@ def decode(data: [int], xvals: [int], k: int) -> [int]:
 
 # Extended Euclidean Algorithm
 def eea(n: [int], d: [int], stop_threshold):
-    q, r = div_two_poly(n, d)
-    if len(n) < stop_threshold:
-        return q, [1], [0]
-    gcd, s, t = eea(d, r, stop_threshold)
-    temp = mult_two_poly(q, t)
-    return gcd, t, [s[i] - temp[i] for i in range(len(s))]
+    x0 = [1]
+    x1 = [0]
+    y0 = [0]
+    y1 = [1]
+
+    while (degree(d) >= stop_threshold):
+        q, r = div_two_poly(n, d)
+        n, d = d, r
+        x0, x1 = x1, sub_two_poly(x0, mult_two_poly(q, x1))
+        y0, y1 = y1, sub_two_poly(y0, mult_two_poly(q, y1))
+
+    return n, x0, y0
+    # q, r = div_two_poly(n, d)
+    # if len(n) < stop_threshold:
+    #     return q, [1], [0]
+    # gcd, s, t = eea(d, r, stop_threshold)
+    # temp = mult_two_poly(q, t)
+    # return gcd, t, [s[i] - temp[i] for i in range(len(s))]
 
 
 if __name__ == "__main__":
