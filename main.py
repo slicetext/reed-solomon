@@ -100,7 +100,7 @@ def sub_two_poly(minuend: [float], subtrahend: [float]) -> [float]:
 
 def degree(p: [float]):
     index = 0
-    while (p[index] == 0):
+    while (len(p) > index and p[index] == 0):
         index += 1
 
     return len(p) - index
@@ -114,7 +114,7 @@ def decode(data: [int], xvals: [int], k: int) -> [int]:
         g = mult_two_poly(g, [1, -i])
     stop_threshold = (len(data) + k) / 2
     r, u, v = eea(g, g_0, stop_threshold)
-    return div_two_poly(r, v)
+    return div_two_poly(r, v)[0]
 
 
 # Extended Euclidean Algorithm
