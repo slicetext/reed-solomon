@@ -123,6 +123,8 @@ def eea(n: [int], d: [int], stop_threshold):
     x1 = [0]
     y0 = [0]
     y1 = [1]
+    n = list(n)
+    d = list(d)
 
     while (degree(d) >= stop_threshold):
         q, r = div_two_poly(n, d)
