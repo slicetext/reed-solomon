@@ -62,6 +62,8 @@ def naive_decode(data: [int], xvals: [int], k: int) -> [int]:
 
 
 def div_two_poly(numerator: [float], denominator: [float]) -> [float]:
+    denominator = list(denominator)
+
     remainder = list(numerator)
 
     quotient = [0] * (len(numerator) - len(denominator) + 1)
@@ -103,7 +105,7 @@ def degree(p: [float]):
     while (len(p) > index and p[index] == 0):
         index += 1
 
-    return len(p) - index
+    return len(p) - index - 1
 
 
 # Gao's algo
