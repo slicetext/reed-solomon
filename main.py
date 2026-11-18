@@ -137,17 +137,19 @@ def eea(n: [int], d: [int], stop_threshold):
 
 
 if __name__ == "__main__":
-    k: int = 12
-    p: int = 4
+    k: int = 6
+    p: int = 8
     n: int = k + p
-    amount: int = 100
+    amount: int = 1000
     score: int = 0
+    corruption_amount = 4
     for i in range(amount):
-        data = [random.randint(-100, 100) for _ in range(k)]
+        data = [random.randint(-1000, 1000) for _ in range(k)]
         xvals = [i - 1 for i in range(n)]
         coded: [int] = encode(data, xvals, n)
-        corruption_index: int = random.randint(0, n - 1)
-        coded[corruption_index] = random.randint(-100, 100)
+        for i in range(corruption_amount):
+            corruption_index: int = random.randint(0, n - 1)
+            coded[corruption_index] = random.randint(-1000, 1000)
         decoded = decode(coded, xvals, k)
         print(str(data) + " : " + str(decoded))
         if (data == decoded):
