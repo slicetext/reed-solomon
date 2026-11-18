@@ -45,5 +45,8 @@ def test_degree():
 
 
 def test_eea():
-    temp = eea([6, 7, 2], [2, 1], 1)
-    assert temp == [3, 2]
+    temp = eea([2, 8, 6], [4, 11, -3], 0)
+    assert temp == ([1, 3], [2/5], [-1/5])
+
+    temp = eea([1, 0, 6, 7], [1, 3, 2], 1)
+    assert temp == ([1, 1], [1/12], [-1/12, 1/4])

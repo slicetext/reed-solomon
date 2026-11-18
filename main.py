@@ -29,7 +29,7 @@ def mult_two_poly(p1: [float], p2: [float]) -> [float]:
 
 
 def lagrange_interpolation(data: [int], xvals: [int], n: int):
-    polynomial: int = [0] * n
+    polynomial: float = [0] * n
 
     for i in range(n):
         numerator: [float] = [1]
@@ -42,7 +42,7 @@ def lagrange_interpolation(data: [int], xvals: [int], n: int):
                 denominator *= denom
 
         for j in range(len(data)):
-            polynomial[j] += round((numerator[j] / denominator) * data[i])
+            polynomial[j] += (numerator[j] / denominator) * data[i]
 
     return polynomial
 
@@ -62,16 +62,16 @@ def naive_decode(data: [int], xvals: [int], k: int) -> [int]:
 
 
 def div_two_poly(numerator: [float], denominator: [float]) -> [float]:
+    remainder = list(numerator)
     denominator = list(denominator)
 
-    remainder = list(numerator)
 
-    quotient = [0] * (len(numerator) - len(denominator) + 1)
-
-    while (remainder[0] == 0):
+    while (remainder[0] < 1e-9 and remainder[0] > -1e-9 and len(remainder) > 1):
         remainder.pop(0)
-    while (denominator[0] == 0):
+    while (denominator[0] < 1e-9 and denominator[0] > -1e-9 and len(denominator) > 1):
         denominator.pop(0)
+
+    quotient = [0] * (len(remainder) - len(denominator) + 1)
 
     for i in range(len(quotient)):
         first_term_result = remainder[0] / denominator[0]
@@ -80,8 +80,7 @@ def div_two_poly(numerator: [float], denominator: [float]) -> [float]:
         remainder = [
             remainder[j] - subtractor[j] for j in range(len(subtractor))
         ] + remainder[len(subtractor):]
-        while (remainder[0] == 0 and len(remainder) > 1):
-            remainder.pop(0)
+        remainder.pop(0)
 
     return quotient, remainder
 
@@ -102,7 +101,7 @@ def sub_two_poly(minuend: [float], subtrahend: [float]) -> [float]:
 
 def degree(p: [float]):
     index = 0
-    while (len(p) > index and p[index] == 0):
+    while (len(p) > index and p[index] < 1e-9 and p[index] > -1e-9):
         index += 1
 
     return len(p) - index - 1
@@ -116,7 +115,7 @@ def decode(data: [int], xvals: [int], k: int) -> [int]:
         g = mult_two_poly(g, [1, -i])
     stop_threshold = (len(data) + k) / 2
     r, u, v = eea(g, g_0, stop_threshold)
-    return div_two_poly(r, v)[0]
+    return [round(i) for i in div_two_poly(r, v)[0]]
 
 
 # Extended Euclidean Algorithm
@@ -134,11 +133,11 @@ def eea(n: [int], d: [int], stop_threshold):
         x0, x1 = x1, sub_two_poly(x0, mult_two_poly(q, x1))
         y0, y1 = y1, sub_two_poly(y0, mult_two_poly(q, y1))
 
-    return n, x0, y0
+    return d, x1, y1
 
 
 if __name__ == "__main__":
-    k: int = 4
+    k: int = 12
     p: int = 4
     n: int = k + p
     amount: int = 100
