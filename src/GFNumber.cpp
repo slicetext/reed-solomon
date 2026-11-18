@@ -1,13 +1,13 @@
 #include <cstdint>
 #include <stdexcept>
 
-class Polynomial {
+class GFNumber {
     uint8_t data;
     uint8_t log[256];
     uint8_t antilog[512];
 
     public:
-        Polynomial(uint8_t data) : data(data) {
+        GFNumber(uint8_t data) : data(data) {
             uint16_t x = 1;
             for(int i = 0; i < 256; i++) {
                 log[i] = x;
@@ -22,15 +22,15 @@ class Polynomial {
             }
         }
 
-        Polynomial operator+(const Polynomial& other) const {
+        GFNumber operator+(const GFNumber& other) const {
             return data ^ other.data;
         }
 
-        Polynomial operator-(const Polynomial& other) const {
+        GFNumber operator-(const GFNumber& other) const {
             return data ^ other.data;
         }
 
-        Polynomial operator*(const Polynomial& other) const {
+        GFNumber operator*(const GFNumber& other) const {
             if(data == 0 || other.data == 0) {
                 return 0;
             }
@@ -38,7 +38,7 @@ class Polynomial {
             return antilog[log[data] + log[other.data]];
         }
 
-        Polynomial operator/(const Polynomial& other) const {
+        GFNumber operator/(const GFNumber& other) const {
             if(data == 0) {
                 return 0;
             }
