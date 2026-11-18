@@ -1,33 +1,44 @@
 #include <cstdint>
 #include <stdexcept>
+#include <array>
 
 class GFNumber {
     uint8_t data;
-    uint8_t log[256];
-    uint8_t antilog[512];
 
-    public:
-        GFNumber(uint8_t data) : data(data) {
-            uint16_t x = 1;
-            for(int i = 0; i < 256; i++) {
-                log[i] = x;
-                antilog[x] = i;
+    template<bool is_log>
+    static constexpr std::array<uint8_t, 512> generate_tables() {
+        std::array<uint8_t, 512> temp{};
+        uint16_t x = 1;
+        for(int i = 0; i < 255; i++) {
+            if constexpr (is_log) {
+                temp[x] = i;
+            } else {
+                temp[i] = x;
+                temp[i + 255] = x; // Efficiency: never need modulo to calculate log
+            }
 
-                // Multiply by alpha, which is 0b10
-                x <<= 1;
-                if(x & 0x100) {
-                    // Wraps number back around
-                    x ^= 0x11d;
-                }
+            // Multiply by alpha, which is 0b10
+            x <<= 1;
+            if(x & 0x100) {
+                // Wraps number back around
+                x ^= 0x11d;
             }
         }
+        return temp;
+    }
+
+    static constexpr auto log = generate_tables<true>();
+    static constexpr auto antilog = generate_tables<false>();
+
+    public:
+        GFNumber(uint8_t data) : data(data) {}
 
         GFNumber operator+(const GFNumber& other) const {
-            return data ^ other.data;
+            return GFNumber(data ^ other.data);
         }
 
         GFNumber operator-(const GFNumber& other) const {
-            return data ^ other.data;
+            return GFNumber(data ^ other.data);
         }
 
         GFNumber operator*(const GFNumber& other) const {
@@ -35,7 +46,7 @@ class GFNumber {
                 return 0;
             }
             // a * b = alpha^a + alpha^b = alpha ^a+b
-            return antilog[log[data] + log[other.data]];
+            return GFNumber(antilog[log[data] + log[other.data]]);
         }
 
         GFNumber operator/(const GFNumber& other) const {
@@ -46,6 +57,6 @@ class GFNumber {
                 throw std::runtime_error("Attempted to divide by Zero");
             }
             // a / b = alpha^a - alpha^b = alpha^a-b
-            return antilog[log[data] - log[other.data]];
+            return GFNumber(antilog[log[data] - log[other.data]]);
         }
 };
